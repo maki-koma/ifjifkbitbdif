@@ -1,0 +1,23 @@
+from dwave.system.samplers import DWaveSampler
+from dwave.system.composites import EmbeddingComposite
+k=6
+Obj01=1
+Obj02=1.5
+Obj03=2
+Obj12=3
+Obj13=5.5
+Obj23=3.5
+Obj14=5.5
+Obj24=4
+Obj34=5
+#この場合最適は０－１－２－３－４, 100010001
+#目的関数
+linear = {('x0', 'x0'): Obj01-2*k, ('x1', 'x1'): Obj02-2*k, ('x2', 'x2'): Obj03-2*k, ('x3', 'x3'): -2*k, ('x4', 'x4'): -2*k, ('x5', 'x5'): -2*k, ('x6', 'x6'): Obj14-2*k, ('x7', 'x7'): Obj24-2*k, ('x8', 'x8'): Obj34-2*k}
+quadratic = {('x0', 'x1'): 2*k, ('x0', 'x2'): 2*k, ('x0', 'x3'): 2*k, ('x0', 'x4'): Obj12,('x0', 'x5'): 0, ('x0', 'x6'): 2*k,('x0', 'x7'): Obj13, ('x0', 'x8'): 0,('x1', 'x2'): 2*k, ('x1', 'x3'): Obj12,('x1', 'x4'): 2*k, ('x1', 'x5'): Obj23,('x1', 'x6'): 0, ('x1', 'x7'): 2*k,('x1', 'x8'): 0, ('x2', 'x3'): Obj13,('x2', 'x4'): Obj23, ('x2', 'x5'): 2*k,('x2', 'x6'): 0, ('x2', 'x7'): 0,('x2', 'x8'): 2*k, ('x3', 'x4'): 2*k,('x3', 'x5'): 2*k, ('x3', 'x6'): 2*k,('x3', 'x7'): Obj12, ('x3', 'x8'): Obj13,('x4', 'x5'): 2*k, ('x4', 'x6'): Obj12, ('x4', 'x7'): 2*k, ('x4', 'x8'): Obj23, ('x5', 'x6'): Obj13, ('x5', 'x7'): Obj23, ('x5', 'x8'): 2*k, ('x6', 'x7'): 2*k, ('x6', 'x8'): 2*k, ('x7', 'x8'): 2*k}
+Q = dict(linear)
+Q.update(quadratic)
+ 
+response = EmbeddingComposite(DWaveSampler(token="")).sample_qubo(Q, num_reads=500)
+ 
+for sample, energy, num_occurrences, chain_break_fraction in list(response.data()):
+    print(sample, "Energy: ", energy, "Occurrences: ", num_occurrences)
