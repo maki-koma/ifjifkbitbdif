@@ -1,0 +1,20 @@
+from dwave.system.samplers import DWaveSampler
+from dwave.system.composites import EmbeddingComposite
+A=1
+B=30
+C=20
+D=10
+while A<10:
+    #目的関数
+    linear = {('x0', 'x0'): -7*A, ('x1', 'x1'): -7*A, ('x2', 'x2'): -7*A, ('x3', 'x3'): -7*A, ('x4', 'x4'): -7*A, ('x5', 'x5'): -7*A, ('x6', 'x6'): -7*A, ('x7', 'x7'): -7*A, ('x8', 'x8'): -7*A, ('x9', 'x9'): -7*A}
+    quadratic = {('x0', 'x1'): B+2*A, ('x0', 'x2'): C+2*A, 
+                 ('x0', 'x3'): 2*A, ('x0', 'x4'): 2*A, ('x0', 'x5'): D+2*A, 
+                 ('x0', 'x6'): 2*A, ('x0', 'x7'): 2*A, ('x0', 'x8'): 2*A, ('x0', 'x9'): 2*A,
+                 ('x1', 'x2'): B+2*A, ('x1', 'x3'): C+2*A, ('x1', 'x4'): 2*A, ('x1', 'x5'): 2*A, ('x1', 'x6'): D+2*A, 
+                 ('x1', 'x7'): 2*A, ('x1', 'x8'): 2*A,('x1', 'x9'): 2*A, ('x2', 'x3'): B+2*A,('x2', 'x4'): C+2*A, ('x2', 'x5'): 2*A,('x2', 'x6'): 2*A, ('x2', 'x7'): D+2*A, ('x2', 'x8'): 2*A,('x2', 'x9'): 2*A, ('x3', 'x4'): B+2*A,('x3', 'x5'): 2*A, ('x3', 'x6'): 2*A,('x3', 'x7'): 2*A, ('x3', 'x8'): D+2*A,('x3', 'x9'): 2*A,('x4', 'x5'): 2*A, ('x4', 'x6'): 2*A, ('x4', 'x7'): 2*A, ('x4', 'x8'): 2*A,('x4', 'x9'): D+2*A, ('x5', 'x6'): B+2*A, ('x5', 'x7'): C+2*A, ('x5', 'x8'): 2*A,('x5', 'x9'): 2*A, ('x6', 'x7'): B+2*A, ('x6', 'x8'): C+2*A,('x6', 'x9'): 2*A, ('x7', 'x8'): B+2*A, ('x7', 'x9'): C+2*A,('x8', 'x9'): B+2*A}
+    Q = dict(linear)
+    Q.update(quadratic)
+    response = EmbeddingComposite(DWaveSampler(token="YourToken")).sample_qubo(Q, num_reads=500)
+    for sample, energy, num_occurrences, chain_break_fraction in list(response.data()):
+        print(A, sample, "Energy: ", energy, "Occurrences: ", num_occurrences)
+    A +=1
